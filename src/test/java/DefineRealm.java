@@ -1,7 +1,9 @@
 import cn.com.shiro.Utils.encrption;
+import cn.com.shiro.bean.MyEncrpRealm;
 import cn.com.shiro.bean.MyRealm;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.io.ResourceUtils;
 import org.apache.shiro.mgt.DefaultSecurityManager;
@@ -69,6 +71,38 @@ public class DefineRealm {
     @Test
     public void testEncry(){
         System.out.println( encrption.md5("123456"));
-        System.out.println(encrption.multiAndSalt("123456"));
+        System.out.println(encrption.multiAndSalt("123456","admin"));
     }
+
+    /**
+     * 对密码使用Hash运算保存
+     *  配置realm.credentialsMatcher
+     * 自定义realm，查询数据库的JdbcRealm
+     */
+    @Test
+    public void testRealmFromMyEncrpRealm(){
+
+        //配置HashedCredentialsMatcher参数
+        HashedCredentialsMatcher hashedCredentialsMatcher = new HashedCredentialsMatcher();
+        hashedCredentialsMatcher.setHashAlgorithmName("md5"); //算法类型
+        hashedCredentialsMatcher.setHashIterations(100); //加密次数
+
+        MyEncrpRealm myEncrpRealm = new MyEncrpRealm();
+        myEncrpRealm.setCredentialsMatcher(hashedCredentialsMatcher);
+        //构建SecurityManager环境
+        DefaultSecurityManager defaultSecurityManager = new DefaultSecurityManager();
+        defaultSecurityManager.setRealm(myEncrpRealm);
+
+
+        //主体提交认证请求
+        SecurityUtils.setSecurityManager(defaultSecurityManager);// 设置SecurityManager环境
+        Subject subject = SecurityUtils.getSubject();// 获取当前主体
+
+        UsernamePasswordToken token = new UsernamePasswordToken("lisi","123456");
+        subject.login(token);
+
+        System.out.println("isAuthenticated: " + subject.isAuthenticated());
+
+    }
+
 }
