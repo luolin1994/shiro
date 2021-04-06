@@ -71,7 +71,7 @@ public class DefineRealm {
     @Test
     public void testEncry(){
         System.out.println( encrption.md5("123456"));
-        System.out.println(encrption.multiAndSalt("123456","admin"));
+        System.out.println(encrption.multiAndSalt("123456","admin",1024));
     }
 
     /**

@@ -20,12 +20,12 @@ public class encrption {
      *加盐 + 多次加密
      * 需要把这个随机数盐也保存进数据库中
      */
-    public static String multiAndSalt(String password,String salt){
+    public static String multiAndSalt(String password,String salt,int times){
         //String salt = new SecureRandomNumberGenerator().nextBytes().toString();
-        int times = 10;   //加密次数
+
         String alogrithmName  = "md5";  //加密算法
 
-        String encodePassword = new SimpleHash(alogrithmName,password,salt,times).toString();
+        String encodePassword = new SimpleHash(alogrithmName,password,salt,times).toHex();
         return encodePassword;
     }
 
